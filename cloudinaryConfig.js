@@ -1,14 +1,20 @@
-import dotenv from "dotenv"
-import cloudinary from "cloudinary"
+import dotenv from "dotenv";
+import cloudinary from "cloudinary";
 
-dotenv.config()
+// Load environment variables
+dotenv.config();
+
+// Cloudinary configuration
 cloudinary.config({ 
-    cloud_name: process.env.COULD_NAME, 
-    api_key: process.env.API_KEY, 
-    api_secret: process.env.API_SECRET
-  });
+  cloud_name: process.env.CLOUD_NAME, 
+  api_key: process.env.API_KEY, 
+  api_secret: process.env.API_SECRET
+});
 
-export const removeFromCloud=(id)=>{
-    cloudinary.v2.uploader.destroy(id,()=>console.log("törlés",`${id}`)
-    )
-}
+
+// Function to remove from Cloudinary
+export const removeFromCloud = (id) => {
+  cloudinary.v2.uploader.destroy(id, () => {
+    console.log("törlés", `${id}`);
+  });
+};
