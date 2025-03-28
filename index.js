@@ -61,5 +61,61 @@ app.get("/api/users", async (req, res) => {
   }
 });
 
+app.delete("/api/users/:id/photo", async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    await admin.auth().updateUser(id, { photoURL: null });
+    res.json({ success: true, message: "Profile picture removed" });
+  } catch (error) {
+    console.error("Error removing profile picture:", error);
+    res.status(500).json({ error: "Failed to remove profile picture" });
+  }
+});
+
+app.get("/api/users/:id", async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const user = await admin.auth().getUser(id); // Fetch a single user by UID
+
+    res.json({
+      uid: user.uid,
+      email: user.email,
+      displayName: user.displayName || null,
+      photoURL: user.photoURL || null,
+    });
+
+  } catch (error) {
+    console.error("Error fetching user:", error);
+    res.status(404).json({ error: "User not found" });
+  }
+});
+
+app.put("/api/users/:id/displayName", async (req, res) => {
+  const { id } = req.params;
+  const { displayName } = req.body;
+
+  try {
+    await admin.auth().updateUser(id, { displayName });
+    res.json({ success: true, message: "Display name updated" });
+  } catch (error) {
+    console.error("Error updating display name:", error);
+    res.status(500).json({ error: "Failed to update display name" });
+  }
+});
+
+// Route to delete a user by ID
+app.delete("/api/users/:id", async (req, res) => {
+  const { id } = req.params;
+  try {
+    await admin.auth().deleteUser(id);
+    res.json({ msg: "User deleted successfully" });
+  } catch (error) {
+    res.status(500).json({ error: result.error });
+  }
+});
+
+
 // Start server
 app.listen(port, () => console.log(`Server listening on port: ${port}`));
