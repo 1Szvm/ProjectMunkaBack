@@ -116,6 +116,31 @@ app.delete("/api/users/:id", async (req, res) => {
   }
 });
 
+// Route to get all collections in Firestore
+app.get("/api/collections", async (req, res) => {
+  try {
+    const collections = await admin.firestore().listCollections();
+    const collectionNames = collections.map((collection) => collection.id);
+    res.json(collectionNames);
+  } catch (error) {
+    console.error("Error fetching collections:", error);
+    res.status(500).json({ error: "Failed to fetch collections" });
+  }
+});
+
+// Route to get all documents in a specific collection
+app.get("/api/collections/:collectionName", async (req, res) => {
+  const { collectionName } = req.params;
+  try {
+    const snapshot = await admin.firestore().collection(collectionName).get();
+    const documents = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+    res.json(documents);
+  } catch (error) {
+    console.error("Error fetching documents:", error);
+    res.status(500).json({ error: "Failed to fetch documents" });
+  }
+});
+
 
 // Start server
 app.listen(port, () => console.log(`Server listening on port: ${port}`));
